@@ -12,13 +12,8 @@ license that can be found in the LICENSE file.
       var private_router;
       Polymer('flatiron-director', {
         autoHash: false,
-        init: '/#/',
         ready: function() {
-          this.router.on('/', function(route) {
-            this.route = route;
-          }.bind(this));
-          this.route = this.router.getRoute() ? 
-            this.router.getRoute().join(this.router.delimiter): '';
+          this.route = this.router.getRoute().join(this.router.delimiter);
         },
         routeChanged: function() {
           if (this.autoHash) {
@@ -29,6 +24,11 @@ license that can be found in the LICENSE file.
         get router() {
           if (!private_router) {
             private_router = new Router();
+            private_router.configure({
+              notfound: function(route){
+                this.route = this.router.getRoute().join(this.router.delimiter);
+              }.bind(this)
+            });
             private_router.init( this.init );
           }
           return private_router;
